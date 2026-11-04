@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7d6e4">
+<title>SHINE HUB | 7-Day Countdown</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#f7d6e4;color:#20202a;font-family:Arial,Helvetica,sans-serif;display:grid;place-items:center;padding:22px}
+main{width:min(100%,520px);background:#fff;border-radius:26px;padding:34px 22px;text-align:center;box-shadow:0 12px 40px rgba(65,20,45,.13)}
+h1{font-size:clamp(30px,8vw,44px);margin:0 0 18px;letter-spacing:-1px}
+.offer{font-size:18px;line-height:1.5;margin:0 auto;max-width:390px}
+#timer{font-size:clamp(38px,11vw,66px);font-weight:800;letter-spacing:1px;margin:28px 0 10px;font-variant-numeric:tabular-nums}
+#status{font-size:14px;color:#777;margin:0}
+</style>
+</head>
+<body>
+<main>
+<h1>shine_hub.eg</h1>
+<p class="offer">Enjoy 15% OFF your next order before the timer ends.</p>
+<div id="timer" aria-live="polite">7d 00:00:00</div>
+<p id="status">Your 7-day countdown starts on your first visit.</p>
+</main>
+<script>
+const STORAGE_KEY = "shine_hub_countdown_start_v1";
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+let startedAt = Number(localStorage.getItem(STORAGE_KEY));
+if (!startedAt || !Number.isFinite(startedAt)) {
+  startedAt = Date.now();
+  localStorage.setItem(STORAGE_KEY, String(startedAt));
+}
+const endsAt = startedAt + SEVEN_DAYS_MS;
+function updateCountdown() {
+  const remaining = Math.max(0, endsAt - Date.now());
+  const seconds = Math.floor(remaining / 1000);
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  document.getElementById("timer").textContent =
+    `${days}d ${String(hours).padStart(2,"0")}:${String(minutes).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+  if (remaining <= 0) document.getElementById("status").textContent = "The 7-day countdown has ended.";
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
